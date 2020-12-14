@@ -8,7 +8,7 @@ The algorithms above can be made to run in O(n^2) by using Radix sort.
 The implementation of this library is O(n^2 log n), with the speed-up to O(n^2) being added soon.
 
 A detailed description of these algorithms including proofs of correctness can be found in
-["Mind the Root: Decoding Arborescences for Dependency Parsing"](bad_link).
+["Mind the Root: Decoding Arborescences for Dependency Parsing"](https://www.aclweb.org/anthology/2020.emnlp-main.390/).
 
 ## Citation
 
