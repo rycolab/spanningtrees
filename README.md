@@ -12,16 +12,22 @@ A detailed description of these algorithms including proofs of correctness can b
 
 ## Citation
 
-This code is for the paper _Mind the Root: Decoding Arborescences for Dependency Parsing_ featured in EMNLP 2020. Please cite as:
+This code is for the paper _Please Mind the Root: Decoding Arborescences for Dependency Parsing_ featured in EMNLP 2020. Please cite as:
 
 ```bibtex
-@inproceedings{meister+al.acl20,
- title = {Mind the Root: {D}ecoding Arborescences for Dependency Parsing},
- author = {Zmigrod, Ran and Vieira, Tim and Cotterell, Ryan},
- booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing ({EMNLP})},
- month = {November},
- year = {2020},
- publisher = {Association for Computational Linguistics},
+@inproceedings{zmigrod-etal-2020-please,
+    title = "Please Mind the Root: {D}ecoding Arborescences for Dependency Parsing",
+    author = "Zmigrod, Ran  and
+      Vieira, Tim  and
+      Cotterell, Ryan",
+    booktitle = "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)",
+    month = nov,
+    year = "2020",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/2020.emnlp-main.390",
+    doi = "10.18653/v1/2020.emnlp-main.390",
+    pages = "4809--4819",
 }
 ```
 
