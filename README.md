@@ -38,7 +38,7 @@ This code is for the paper _Please Mind the Root: Decoding Arborescences for Dep
 
 Installation:
 ```bash
-git clone https://github.com/ranzmigrod/spanningtree
+git clone https://github.com/rycolab/spanningtree
 cd spanningtree
 pip install -e .
 ```
