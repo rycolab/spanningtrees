@@ -1,7 +1,7 @@
 import numpy as np
 from spanningtrees.heap import Heap, HeapMerge, MonotonicMapHeap
 from spanningtrees.union_find import UnionFind
-from spanningtrees.graph import Graph, Node
+from spanningtrees.graph import Graph, Node, Edge
 
 
 class ContractionGraph(UnionFind):
@@ -15,6 +15,7 @@ class ContractionGraph(UnionFind):
         super().__init__(nodes)
         self.contractions = []
         self.n = len(nodes)
+        self.c_id = self.n
 
     def __repr__(self):
         return '%s({\n%s\n})' % (self.__class__.__name__,
@@ -96,7 +97,8 @@ class ContractionGraph(UnionFind):
         Create a contracted node in the graph given a cycle
         """
         nodes = [self[e.tgt] for e in cycle]
-        c = ContractedNode(cycle, nodes, sum_cavities(cycle), graph=self)
+        c = ContractedNode(cycle, nodes, sum_cavities(cycle), self, self.c_id)
+        self.c_id += 1
         self.contractions.append(c)
         return c
 
@@ -108,9 +110,13 @@ class ContractionGraph(UnionFind):
         self loops are created during contraction ("dead edges").
         """
         w = self[w]
+        if w.edges.empty():
+            return None
         e = w.edges.pop()
-        while self[e.src] is w:   # pop until we stop getting self loops
+        while self[e.src] is w and not w.edges.empty():   # pop until we stop getting self loops
             e = w.edges.pop()
+        if self[e.src] is w:
+            return None
         return e
 
     def best_edge_acyclic(self, tgt, tree):
@@ -118,7 +124,7 @@ class ContractionGraph(UnionFind):
         Find the next best edge that does not create a directed cycle.
         """
         reachable = tree.reachable_from(tgt)
-        w = self[tgt]
+        w = tgt
         best = None
         undo = []
         while not w.edges.empty():
@@ -130,6 +136,13 @@ class ContractionGraph(UnionFind):
         for f in undo:
             w.edges.push(f)
         return best
+
+    def best_blue_weight(self, node, tree):
+        edge = self.best_edge_acyclic(node, tree)
+        old_edge = tree[node]
+        if edge is None:
+            return np.inf
+        return edge.weight - old_edge.weight
 
     def best_edge_not_from(self, node, bad_src):
         """
@@ -221,12 +234,13 @@ class ContractedNode(Node):
     There are multiple ways to perform a contraction, see discussion on
     the different lazy approaches in the comments above"
     """
-    def __init__(self, cycle, nodes, cavities, graph):
+    def __init__(self, cycle, nodes, cavities, graph, node_id):
         name = frozenset(nodes)
-        super().__init__(name, [])
+        super().__init__(name, [], node_id)
 
         self.cycle = cycle
         self.nodes = nodes
+        self.g_nodes = None
 
         # PERFORMING UNION HERE FOR ANNOYING REASONS.
         graph.add(self)
@@ -236,9 +250,7 @@ class ContractedNode(Node):
             edges = []
             for node, cavity in zip(nodes, cavities):
                 for e in node.edges:
-                    e.weight += cavity
-                    edges.append(e)
-                node.edges = None   # erase the node's edges.
+                    edges.append(Edge(e.src, e.tgt, e.weight + cavity))
             self.edges = Heap(edges)
 
         elif HOWLAZY == 1:
@@ -248,13 +260,11 @@ class ContractedNode(Node):
                     if graph[e.src] is not self:   # EAGER FILTERING OF SELF LOOPS
                         e.weight += cavity
                         edges.append(e)
-                node.edges = None   # erase the node's edges.
             self.edges = Heap(edges)
 
         else:
-            self.edges = HeapMerge([MonotonicMapHeap(x.edges, offset(o))
-                                    for o, x in zip(cavities, self.nodes)
-                                    if not x.edges.empty()])
+            self.edges = HeapMerge([Heap([Edge(e.src, e.tgt, e.weight + o) for e in x.edges])
+                                   for o, x in zip(cavities, self.nodes) if not x.edges.empty()])
 
     def expand(self, tgt):
         """
@@ -263,12 +273,18 @@ class ContractedNode(Node):
         """
         for x in self.nodes:
             if isinstance(x, ContractedNode):
-                if tgt in x.ground_nodes():   # expensive without any cleverness
+                if tgt in x.ground:
                     return x
             else:
                 if x == tgt:
                     return x
         assert False
+
+    @property
+    def ground(self):
+        if self.g_nodes is None:
+            self.g_nodes = set(self.ground_nodes())
+        return self.g_nodes
 
     # Note: This is only used in expand
     def ground_nodes(self):

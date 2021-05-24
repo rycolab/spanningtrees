@@ -102,3 +102,14 @@ def best_rc_tree(W):
     trees = sorted(trees, key=lambda x: x[1])
     return trees[0]
 
+
+def kbest(W):
+    trees = all_unrooted_spanning_trees(W)
+    trees = sorted(trees, key=lambda x: x[1])
+    return trees
+
+
+def kbest_rc(W):
+    trees = all_rooted_spanning_trees(W)
+    trees = sorted(trees, key=lambda x: x[1])
+    return trees

@@ -1,4 +1,5 @@
 import numpy as np
+from spanningtrees.contract import ContractedNode
 
 
 class Forest(dict):
@@ -7,23 +8,33 @@ class Forest(dict):
     at most one incoming edge.
     A forest is a generalization of a spanning tree.
     """
-    def has_path(self, src, tgt):
-        "Is there is (ground) path from src to tgt?"
-        while tgt != src:
-            if tgt not in self: return False
-            e = self[tgt]
-            tgt = e.src
-        return True
-
-    # Note: if we compute the reachability graph up front we can probably reduce
-    # the cost substantially.  Basically, it is the SCC algorithm, which is
-    # linear time instead of quadratic.
-    def reachable_from(self, src):       # cost is linear per call
-        children = set()
-        for node in self:
-            if self.has_path(src, node):
-                children.add(node)
-        return children
+    def reachable_from(self, src):
+        reach = src.ground if isinstance(src, ContractedNode) else {src}
+        visited = set(reach)
+        visited.add(0)
+        for tgt in self:
+            if tgt == src:
+                continue
+            path = set()
+            while tgt not in visited:
+                if tgt not in self:
+                    for node_ in self:
+                        if isinstance(node_, ContractedNode) and tgt in node_.ground:
+                            tgt = node_
+                            path.update(node_.ground)
+                            break
+                    if tgt not in self:
+                        break
+                elif isinstance(tgt, ContractedNode):
+                    path.update(tgt.ground)
+                else:
+                    path.add(tgt)
+                visited.add(tgt)
+                edge = self[tgt]
+                tgt = edge.src
+            if tgt in reach:
+                reach.update(path)
+        return reach
 
     def filter_src(self, node):
         "Set of nodes pointed to by `node`."

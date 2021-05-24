@@ -4,6 +4,7 @@ from spanningtrees.graph import Graph
 from spanningtrees.brute_force import best_tree, best_rc_tree
 from spanningtrees.util import random_instance
 from arsenal import ok, colors
+from tqdm import tqdm
 
 
 def test_1b():
@@ -13,7 +14,7 @@ def test_1b():
     """
     print(colors.yellow % '# Regular')
     n = 6
-    for _ in range(50):
+    for _ in tqdm(range(100)):
         A = random_instance(n)
         graph = Graph.build(A)
         mst = MST(graph)
@@ -39,7 +40,7 @@ def test_1b_scc():
     """
     print(colors.yellow % '# Regular SCC')
     n = 6
-    for _ in range(50):
+    for _ in tqdm(range(100)):
         A = random_instance(n)
         graph = Graph.build(A)
         mst = MST(graph)
@@ -65,7 +66,7 @@ def test_c1b():
     """
     print(colors.yellow % '# Root constraint')
     n = 6
-    for _ in range(50):
+    for _ in tqdm(range(100)):
         A = random_instance(n)
         graph = Graph.build(A)
         mst = MST(graph, True)
@@ -90,7 +91,7 @@ def test_c1b_scc():
     """
     print(colors.yellow % '# Root constraint SCC')
     n = 6
-    for _ in range(50):
+    for _ in tqdm(range(100)):
         A = random_instance(n)
         graph = Graph.build(A)
         mst = MST(graph, True)

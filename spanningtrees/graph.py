@@ -33,17 +33,18 @@ class Node(object):
     - a heap of incoming edge preferences.
 
     """
-    __slots__ = 'name', 'edges'
+    __slots__ = 'name', 'edges', 'id'
 
-    def __init__(self, name, edges):
+    def __init__(self, name, edges, node_id):
         self.name = name
         self.edges = Heap(edges)
+        self.id = node_id
 
     def __eq__(self, other):
         return self is other or self.name == other
 
     def __hash__(self):
-        return hash(self.name)
+        return self.id
 
     def __repr__(self):
         return f'{self.name}'
@@ -94,13 +95,12 @@ class Graph(dict):
                 G[tgt][src] = graph[src, tgt], None
         return cls(G)
 
-    @ property
     def node_list(self):
         """
         Create representation of graph as a list of (node, incomming_edges).
         This is needed for the MST algorithm
         """
-        return [(tgt, [Edge(src, tgt, self[tgt][src][0], self[tgt][src][1]) for src in self[tgt]])
+        return [(tgt, [Edge(src, tgt, self[tgt][src][0]) for src in self[tgt]])
                 for tgt in self]
 
     @classmethod
@@ -110,7 +110,7 @@ class Graph(dict):
         where graph[tgt][src] is a list of all edges from src to tgt. We only need to take the
         best scoring (minimum weight) edge in order to compute the MST.
         """
-        G = cls()
+        G = {}
         for tgt in graph:
             G[tgt] = {}
             for src in graph[tgt]:
@@ -125,4 +125,4 @@ class Graph(dict):
                 else:
                     cost, label = w, None
                 G[tgt][src] = cost, label
-        return G
+        return cls(G)

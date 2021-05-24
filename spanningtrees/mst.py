@@ -15,9 +15,10 @@ class MST:
     def __init__(self, graph, root_constraint=False, dummy_root=0):
         assert isinstance(graph, Graph)
         self.root_constraint = root_constraint
-        self.dummy_root = dummy_root
+        self.dummy_root = dummy_root  # TODO: test that we can encoded the dummy_root to an arbitrary node's name
 
-        self.graph = graph.node_list
+        self.graph = graph
+        self._graph = graph.node_list()
 
         # The set of possible roots (nodes with edges coming from dummy_root).
         self._roots = graph.target_nodes(self.dummy_root)
@@ -35,14 +36,15 @@ class MST:
         if self.root_constraint:
             # In the root constrained setting, forcing an edge from dummy_root
             # implies no other edges leaving dummy_root should be considered.
+            # We add these extract exclusions to the set `xxx`.
             for tgt, src in included.items():
                 if src == self.dummy_root:
                     for w in self._roots:
                         if w == tgt: continue
                         dummy_excl.add((self.dummy_root, w))
 
-        nodes = [Node(self.dummy_root, [])]
-        for tgt, edges in self.graph:
+        nodes = [Node(self.dummy_root, [], self.dummy_root)]
+        for tgt, edges in self._graph:
             es = []
             if tgt in included:
                 src = included[tgt]
@@ -55,7 +57,7 @@ class MST:
                     if (e.src, tgt) in excluded: continue
                     if (e.src, tgt) in dummy_excl: continue
                     es.append(e)
-            nodes.append(Node(tgt, es))
+            nodes.append(Node(tgt, es, tgt))
         return ContractionGraph(nodes)
 
     # ___________________________________________________________________________
@@ -94,6 +96,8 @@ class MST:
             while nodes:
                 w = nodes.popleft()
                 e = G.best_edge_no_self_loop(w)
+                if e is None:
+                    return None
                 F[w] = e
 
             cycles = G.scc(F)
