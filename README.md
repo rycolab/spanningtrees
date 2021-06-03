@@ -7,12 +7,22 @@ Gabow and Tarjan (1984) suggest an efficient extension to the algorithm for this
 The algorithms above can be made to run in O(n^2) by using Radix sort.
 The implementation of this library is O(n^2 log n), with the speed-up to O(n^2) being added soon.
 
+This library also contains a simplified version of the K-Best MST algorithm
+of Camerini et al. (1980) that runs in O(K * cost(MST)). Additionally, the
+library contains a new algorithm for finding the K-Best dependency trees subject
+to a root constraint.
+
 A detailed description of these algorithms including proofs of correctness can be found in
-["Mind the Root: Decoding Arborescences for Dependency Parsing"](https://www.aclweb.org/anthology/2020.emnlp-main.390/).
+["Mind the Root: Decoding Arborescences for Dependency Parsing"](https://www.aclweb.org/anthology/2020.emnlp-main.390/)
+and
+["On Finding the K-best Non-projective Dependency Trees"](https://arxiv.org/abs/2106.00780)
+.
 
 ## Citation
 
-This code is for the paper _Please Mind the Root: Decoding Arborescences for Dependency Parsing_ featured in EMNLP 2020. Please cite as:
+This code is for the papers _Please Mind the Root: Decoding Arborescences for Dependency Parsing_ and
+_On Finding the K-best Non-projective Dependency Trees_ featured in EMNLP 2020 and ACL 2021 respectively.
+Please cite as:
 
 ```bibtex
 @inproceedings{zmigrod-etal-2020-please,
@@ -28,6 +38,15 @@ This code is for the paper _Please Mind the Root: Decoding Arborescences for Dep
     url = "https://www.aclweb.org/anthology/2020.emnlp-main.390",
     doi = "10.18653/v1/2020.emnlp-main.390",
     pages = "4809--4819",
+}
+
+@inproceedings{zmigrod-etal-2021-kbest,
+    title = "On Finding the K-best Non-projective Dependency Trees",
+    author = "Zmigrod, Ran  and
+      Vieira, Tim  and
+      Cotterell, Ryan",
+    year = "2021",
+    url = "https://arxiv.org/abs/2106.00780",
 }
 ```
 
@@ -81,6 +100,17 @@ Output:
 ```
 [-1  0  0  2]
 [-1  3  0  2]
+```
+
+The following can be instead used to find the K-Best trees
+```python
+from spanningtrees.kbest import KBest
+
+for tree in KBest(G).kbest():
+    print(tree.to_array())
+# Root constraint
+for tree in KBest(G, True).kbest():
+    print(tree.to_array())
 ```
 
 ## Related Work
