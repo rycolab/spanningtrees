@@ -40,13 +40,19 @@ Please cite as:
     pages = "4809--4819",
 }
 
-@inproceedings{zmigrod-etal-2021-kbest,
+@inproceedings{zmigrod-etal-2021-finding,
     title = "On Finding the K-best Non-projective Dependency Trees",
     author = "Zmigrod, Ran  and
       Vieira, Tim  and
       Cotterell, Ryan",
+    booktitle = "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
+    month = aug,
     year = "2021",
-    url = "https://arxiv.org/abs/2106.00780",
+    address = "Online",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.acl-long.106",
+    doi = "10.18653/v1/2021.acl-long.106",
+    pages = "1324--1337",
 }
 ```
 
