@@ -1,14 +1,13 @@
 # Minimum Spanning Tree
-This library contains a modified implementation of the Minimum Spanning Tree (MST) algorithm proposed by Tarjan (1977) and Camerini et al. (1979).
+This library contains a modified implementation of the Maximum Spanning Tree (MST) algorithm proposed by Tarjan (1977) and Camerini et al. (1979).
 The MST algorithm is a popular decoding algorithm for graph-based depenedency parsing.
 However, dependency trees often have a constraint that only one edge may emanate from the root.
 Gabow and Tarjan (1984) suggest an efficient extension to the algorithm for this which is included in this library.
-
-The algorithms above can be made to run in O(n^2) by using Radix sort.
-The implementation of this library is O(n^2 log n), with the speed-up to O(n^2) being added soon.
+The implementation of this library runs in the expected O(N^2) and is based on the
+implementation of [Stanojević and Cohen](https://github.com/stanojevic/Fast-MST-Algorithm). soon.
 
 This library also contains a simplified version of the K-Best MST algorithm
-of Camerini et al. (1980) that runs in O(K * cost(MST)). Additionally, the
+of Camerini et al. (1980) that runs in O(K N^2). Additionally, the
 library contains a new algorithm for finding the K-Best dependency trees subject
 to a root constraint.
 
@@ -59,7 +58,6 @@ Please cite as:
 ## Requirements and Installation
 
 * Python version >= 3.6
-* For running the tests, we use the library package [arsenal](https://github.com/timvieira/arsenal)
 
 Installation:
 ```bash
@@ -70,53 +68,74 @@ pip install -e .
 
 
 ## Example
-We support graph creations either using numpy arrays or dictionaries.
-A dictionary graph `g` is such that `g[tgt][src]` contains a single or list of edges from `src` to `tgt`
+We support graph creations using numpy arrays.
 We consider `0` to be the root node of the graph.
 Note that the root node has no incoming edges and we do not have any self loops.
 ```python
 import numpy as np
-from spanningtrees.graph import Graph
+from spanningtrees.mst import MST
+from spanningtrees.kbest import KBest
 
-G = Graph.build(
-    np.array([
-        [0, 17, 36, 21],
-        [0,  0, 56, 42],
-        [0, 86,  0,  9],
-        [0, 23, 72,  0]
-    ])
-)
+graph = np.array(([
+        [ 0., 71., 52., 67.],
+        [ 0.,  0., 32., 46.],
+        [ 0.,  2.,  0., 79.],
+        [ 0., 65., 16.,  0.]
+    ]), dtype=float)
+mst = MST(graph)
+kbest = KBest(graph)
 
-G = Graph.from_multigraph({
-        1: {0: 17, 2: 86, 3: [23, 67]},
-        2: {0: 36, 1: 56, 3: 72},
-        3: {0: 21, 1: 42, 2: 9},
-    })
 ```
 The MST and root-constrained MST can then be calculated by:
 ```python
-from spanningtrees.mst import MST
-
-mst = MST(G).mst()
-mst_constrained = MST(G, True).mst()
-print(mst.to_array())
-print(mst_constrained.to_array())
+print(f"Unconstrained MST: {mst.mst()}")
+print(f"Constrained MST:   {mst.mst(True)}")
 ```
 Output:
 ```
-[-1  0  0  2]
-[-1  3  0  2]
+Unconstrained MST: [-1  0  0  2]
+Constrained MST:   [-1  3  0  2]
 ```
 
 The following can be instead used to find the K-Best trees
 ```python
-from spanningtrees.kbest import KBest
-
-for tree in KBest(G).kbest():
-    print(tree.to_array())
+print("Unconstrained K-best")
+for tree in kbest.kbest():
+    print(kbest.weight(tree), tree)
 # Root constraint
-for tree in KBest(G, True).kbest():
-    print(tree.to_array())
+print("Constrained K-best")
+for tree in kbest.kbest(True):
+    print(kbest.weight(tree), tree)
+```
+Output:
+```
+Unconstrained K-best
+202.0 [-1  0  0  2]
+196.0 [-1  3  0  2]
+190.0 [-1  0  0  0]
+184.0 [-1  3  0  0]
+182.0 [-1  0  1  2]
+170.0 [-1  0  1  0]
+169.0 [-1  0  0  1]
+164.0 [-1  3  1  0]
+154.0 [-1  0  3  0]
+149.0 [-1  0  1  1]
+148.0 [-1  3  3  0]
+133.0 [-1  0  3  1]
+133.0 [-1  2  0  2]
+121.0 [-1  2  0  0]
+100.0 [-1  2  0  1]
+85.0 [-1  2  3  0]
+Constrained K-best
+196.0 [-1  3  0  2]
+182.0 [-1  0  1  2]
+164.0 [-1  3  1  0]
+149.0 [-1  0  1  1]
+148.0 [-1  3  3  0]
+133.0 [-1  2  0  2]
+133.0 [-1  0  3  1]
+100.0 [-1  2  0  1]
+85.0 [-1  2  3  0]
 ```
 
 ## Related Work
@@ -124,6 +143,7 @@ This code repository focuses on decoding MSTs.
 A useful library to use during training and learning of edges weights
 can be found [here](https://github.com/rycolab/tree_expectations).
 
-Other libraries for performing MST computations are [networkx](https://networkx.github.io/documentation/stable/index.html)
+Other libraries for performing MST computations are
+[Stanojević and Cohen](https://github.com/stanojevic/Fast-MST-Algorithm),
+[networkx](https://networkx.github.io/documentation/stable/index.html),
 and [stanza](https://stanfordnlp.github.io/stanza/).
-We will include a runtime comparison soon.
