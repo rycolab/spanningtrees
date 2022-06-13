@@ -17,6 +17,9 @@ and
 ["On Finding the K-best Non-projective Dependency Trees"](https://arxiv.org/abs/2106.00780)
 .
 
+## Runtime Experiments
+A runtime experiment on random weights is available to run in `notes/runtime_experiment.py`
+
 ## Citation
 
 This code is for the papers _Please Mind the Root: Decoding Arborescences for Dependency Parsing_ and
