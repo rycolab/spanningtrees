@@ -2,9 +2,9 @@ import numpy as np
 import heapq
 from dataclasses import dataclass
 
-from maximum_spanning_tree.mst import Edge, MST, TreeError
-from maximum_spanning_tree.edge_priority_queue import DoubleEdgePriorityQueue
-from maximum_spanning_tree.brute_force import all_unrooted_spanning_trees, all_rooted_spanning_trees
+from spanningtrees.mst import Edge, MST, TreeError
+from spanningtrees.edge_priority_queue import DoubleEdgePriorityQueue
+from spanningtrees.brute_force import all_unrooted_spanning_trees, all_rooted_spanning_trees
 
 
 @dataclass

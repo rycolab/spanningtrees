@@ -5,8 +5,8 @@ See original code at https://github.com/stanojevic/Fast-MST-Algorithm/blob/main/
 import numpy as np
 from dataclasses import dataclass
 
-from maximum_spanning_tree.edge_priority_queue import EdgePriorityQueue
-from maximum_spanning_tree.brute_force import all_unrooted_spanning_trees, all_rooted_spanning_trees
+from spanningtrees.edge_priority_queue import EdgePriorityQueue
+from spanningtrees.brute_force import all_unrooted_spanning_trees, all_rooted_spanning_trees
 
 
 class TreeError(LookupError):
