@@ -64,8 +64,8 @@ Please cite as:
 
 Installation:
 ```bash
-git clone https://github.com/rycolab/spanningtree
-cd spanningtree
+git clone https://github.com/rycolab/spanningtrees
+cd spanningtrees
 pip install -e .
 ```
 
